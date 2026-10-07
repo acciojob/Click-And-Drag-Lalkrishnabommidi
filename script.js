@@ -1,1 +1,57 @@
 // Your code here.
+const container = document.querySelector(".container");
+const cubes = document.querySelectorAll(".cube");
+
+let activeCube = null;
+let offsetX = 0;
+let offsetY = 0;
+
+cubes.forEach((cube) => {
+  cube.addEventListener("mousedown", (e) => {
+    activeCube = cube;
+
+    const cubeRect = cube.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    offsetX = e.clientX - cubeRect.left;
+    offsetY = e.clientY - cubeRect.top;
+
+    cube.style.position = "absolute";
+
+    const left = cubeRect.left - containerRect.left;
+    const top = cubeRect.top - containerRect.top;
+
+    cube.style.left = `${left}px`;
+    cube.style.top = `${top}px`;
+
+    cube.style.zIndex = "10";
+  });
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!activeCube) {
+    return;
+  }
+
+  const containerRect = container.getBoundingClientRect();
+  const cubeRect = activeCube.getBoundingClientRect();
+
+  let left = e.clientX - containerRect.left - offsetX;
+  let top = e.clientY - containerRect.top - offsetY;
+
+  const maxLeft = container.clientWidth - cubeRect.width;
+  const maxTop = container.clientHeight - cubeRect.height;
+
+  left = Math.max(0, Math.min(left, maxLeft));
+  top = Math.max(0, Math.min(top, maxTop));
+
+  activeCube.style.left = `${left}px`;
+  activeCube.style.top = `${top}px`;
+});
+
+document.addEventListener("mouseup", () => {
+  if (activeCube) {
+    activeCube.style.zIndex = "1";
+    activeCube = null;
+  }
+});
